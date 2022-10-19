@@ -130,4 +130,5 @@ dmypy.json
 
 .DS_Store
 fraud-detection-modeling/
+zenml/
 notebooks/.ipynb_checkpoints
