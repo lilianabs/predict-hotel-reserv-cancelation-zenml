@@ -129,4 +129,5 @@ dmypy.json
 .pyre/
 
 .DS_Store
-zenml101/
+fraud-detection-modeling/
+notebooks/.ipynb_checkpoints
