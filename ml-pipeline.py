@@ -1,6 +1,7 @@
 # %%
 import pandas as pd
 import numpy as np
+import mlflow
 
 from sklearn.metrics import accuracy_score, precision_score, recall_score, f1_score
 from sklearn.ensemble import RandomForestClassifier
@@ -9,6 +10,10 @@ from sklearn.model_selection import train_test_split
 # zenml importing
 from zenml.steps import step, Output
 from zenml.pipelines import pipeline
+from zenml.client import Client
+from zenml.integrations.mlflow.mlflow_utils import get_tracking_uri
+
+experiment_tracker = Client().active_stack.experiment_tracker
 
 # %%
 @step
@@ -64,10 +69,11 @@ def split_train_data(data_transform: pd.DataFrame) -> Output(
     return X_train, X_test, y_train, y_test
 
 # %%
-@step(enable_cache=False)
+@step(enable_cache=False, experiment_tracker=experiment_tracker.name)
 def train_model(X_train: pd.DataFrame, y_train: pd.Series) -> Output(
     model=RandomForestClassifier
 ):
+    mlflow.sklearn.autolog()
     
     params = {
         "n_estimators": 10,
@@ -123,7 +129,12 @@ training_pipeline(
     evaluate_model=evaluate_model()
 ).run()
 
-# %%
-
+print(
+        "Now run \n "
+        f"    mlflow ui --backend-store-uri {get_tracking_uri()}\n"
+        "To inspect your experiment runs within the mlflow UI.\n"
+        "You can find your runs tracked within the `mlflow_example_pipeline`"
+        "experiment. Here you'll also be able to compare the two runs.)"
+    )
 
 
