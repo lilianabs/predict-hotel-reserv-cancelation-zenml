@@ -1,10 +1,7 @@
 import pandas as pd
 import mlflow
-import os
 
-from sklearn.ensemble import RandomForestClassifier
 from sklearn.model_selection import train_test_split
-from sklearn.metrics import accuracy_score
 from sklearn.metrics import f1_score
 from sklearn.linear_model import LogisticRegression
 from sklearn.preprocessing import OneHotEncoder
@@ -18,8 +15,6 @@ from category_encoders import CountEncoder
 from zenml.steps import step, Output
 from zenml.pipelines import pipeline
 from zenml.client import Client
-from zenml.environment import Environment
-
 
 experiment_tracker = Client().active_stack.experiment_tracker
 
