@@ -1,20 +1,32 @@
 import pandas as pd
+import numpy as np
 import mlflow
 
 from sklearn.model_selection import train_test_split
-from sklearn.metrics import f1_score
-from sklearn.linear_model import LogisticRegression
+from sklearn.metrics import accuracy_score
 from sklearn.preprocessing import OneHotEncoder
 from sklearn.impute import SimpleImputer
+from sklearn.ensemble import RandomForestClassifier
 from sklearn.pipeline import Pipeline
-from sklearn. compose import ColumnTransformer
+from sklearn.compose import ColumnTransformer
 
-from category_encoders import CountEncoder
 
 # zenml importing
 from zenml.steps import step, Output
 from zenml.pipelines import pipeline
 from zenml.client import Client
+
+NUM_FEATURES = [
+        'lead_time', 'arrival_date_week_number', "arrival_date_day_of_month",
+        'stays_in_weekend_nights', 'stays_in_week_nights', 'adults', 'children',
+        'babies', 'is_repeated_guest', 'previous_cancellations', 'previous_bookings_not_canceled',
+        'required_car_parking_spaces', 'total_of_special_requests', 'adr'
+]
+
+CAT_FEATURES = [
+        'hotel', 'agent', 'arrival_date_month', 'meal', 'market_segment',
+        'distribution_channel', 'reserved_room_type', 'deposit_type', 'customer_type'
+]
 
 experiment_tracker = Client().active_stack.experiment_tracker
 
@@ -35,116 +47,114 @@ def load_data() -> Output(
     return data
 
 @step(enable_cache=False)
-def perform_feature_preprocessing(data: pd.DataFrame) -> Output(
-    data_preprocessed=pd.DataFrame
+def clean_data(data: pd.DataFrame) -> Output(
+    cleaned_data=pd.DataFrame
 ):
 
-     # Extract year, month, and date from the 
-     # reservation_status_column
-    data['reservation_status_date'] = pd.to_datetime(data['reservation_status_date'])
-    data['reservation_status_date_year'] = data['reservation_status_date'].dt.year
-    data['reservation_status_date_month'] = data['reservation_status_date'].dt.month
-    data['reservation_status_date_day'] = data['reservation_status_date'].dt.day
-    data = data.drop('reservation_status_date', axis=1)
+    # Select features
+    cleaned_data = data[NUM_FEATURES + CAT_FEATURES + ['is_canceled']].copy()
     
-    # Drop features
-    features_to_drop = ['name', 'email', 'phone-number', 'credit_card', 'company']
-    data = data.drop(features_to_drop, axis=1)
+    # Convert all cat features that are float into int
+    for col in CAT_FEATURES:
+        if cleaned_data[col].dtype == 'float':
+            cleaned_data[col] = cleaned_data[col].fillna(0).astype(int)
     
-    data_preprocessed = data.copy()
-        
-    return data_preprocessed
+    return cleaned_data
 
 @step
-def split_train_data(data: pd.DataFrame) -> Output(
+def split_train_data(cleaned_data: pd.DataFrame) -> Output(
     X_train=pd.DataFrame,
-    X_test=pd.DataFrame,
+    X_valid=pd.DataFrame,
     y_train=pd.Series,
-    y_test=pd.Series
+    y_valid=pd.Series
 ):
     
-    X = data.drop('is_canceled', axis=1)
-    y = data.is_canceled
+    X = cleaned_data[NUM_FEATURES + CAT_FEATURES]
+    y = cleaned_data.is_canceled
     
-    X_train, X_test, y_train, y_test = train_test_split(X, y,
-                                                        stratify=y,
-                                                        random_state=0,
-                                                        train_size=0.8)
+    X_train, X_valid, y_train, y_valid = train_test_split(X, y, 
+                                                    test_size=0.3, 
+                                                    random_state=42)
     
-    return X_train, X_test, y_train, y_test
+    return X_train, X_valid, y_train, y_valid
 
 
 @step(enable_cache=False, experiment_tracker=experiment_tracker.name)
-def train_model(X_train: pd.DataFrame, y_train: pd.Series) -> Output(
-    model_pipeline=Pipeline
+def train_model(X_train: pd.DataFrame,
+                y_train: pd.Series,
+                ) -> Output(
+    model=Pipeline
 ):
-    mlflow.sklearn.autolog()
+                    
+    #mlflow.sklearn.autolog()
     
-    features_to_impute = ['children', 'agent']
-    features_to_onehot_encode = ['hotel', 'arrival_date_month', 
-                                 'meal', 'deposit_type', 'customer_type', 
-                                 'reservation_status']
-    features_to_count_encode = ['country', 'market_segment', 
-                                'distribution_channel', 'reserved_room_type', 
-                                'assigned_room_type']
-    
-    imputer = SimpleImputer(fill_value=0)
-    onehot_enc = OneHotEncoder()
-    count_enc = CountEncoder()
-    
-    preprocessor = ColumnTransformer(
-    transformers=[('imputer', imputer, features_to_impute),
-            ('onehot', onehot_enc, features_to_onehot_encode),
-            ('count_encode', count_enc, features_to_count_encode)
+    num_transformer = SimpleImputer(strategy='constant')
+
+    cat_transformer = Pipeline(steps=[
+        ('imputer', SimpleImputer(strategy='constant', fill_value='Unknown')),
+        ('onehot', OneHotEncoder(handle_unknown='ignore'))
+    ])
+
+    preprocessor = ColumnTransformer(transformers=[
+        ('num', num_transformer, NUM_FEATURES),
+        ('cat', cat_transformer, CAT_FEATURES)
     ])
     
-    model = LogisticRegression()
+    params = {
+        "n_estimators": 10,
+        "max_depth": 5
+    }
     
-    model_pipeline = Pipeline(
-    steps=[
-       ('preprocessor', preprocessor),
-       ('model', model)
+    mlflow.log_params(params)
+    
+    model = Pipeline(steps=[
+        ('preprocessor', preprocessor),
+        ('classifier', RandomForestClassifier(**params, random_state=42))
     ])
     
-    model_pipeline.fit(X_train, y_train)
+    model.fit(X_train, y_train)
     
-    return model_pipeline
+    y_predict = model.predict(X_train)
+    train_acc = accuracy_score(y_train, y_predict)
+    mlflow.log_metric("train_accuracy", train_acc)
+    
+    return model
 
-
-@step(enable_cache=False)
-def evaluate_model(model_pipeline: Pipeline,
-                   X_test: pd.DataFrame, y_test: pd.Series) -> Output(
-                       f1=float
+@step(experiment_tracker=experiment_tracker.name)
+def evaluate_model(model: Pipeline,
+                   X_valid: pd.DataFrame, y_valid: pd.Series) -> Output(
+                       acc=float
                    ):
     
-    y_predict = model_pipeline.predict(X_test)
     
-    f1_sc = f1_score(y_test, y_predict)
+    y_predict = model.predict(X_valid)
+    test_acc = accuracy_score(y_valid, y_predict)
+    mlflow.log_metric("test_accuracy", test_acc)
     
-    return f1_sc
+    return test_acc
 
 
 @pipeline(enable_cache=False)
 def training_pipeline(
     load_data,
-    perform_feature_preprocessing,
+    clean_data,
     split_train_data,
     train_model,
     evaluate_model
 ):
     
     data = load_data()
-    data_preprocessed = perform_feature_preprocessing(data)
-    X_train, X_test, y_train, y_test = split_train_data(data_preprocessed)
+    cleaned_data = clean_data(data)
+    X_train, X_valid, y_train, y_valid = split_train_data(cleaned_data)
     model = train_model(X_train, y_train)
-    f1_sc = evaluate_model(model, X_test, y_test)
+    f1_sc = evaluate_model(model, X_valid, y_valid)
     
     print(f1_sc)
 
 
 training_pipeline(
     load_data=load_data(),
-    perform_feature_preprocessing=perform_feature_preprocessing(),
+    clean_data=clean_data(),
     split_train_data=split_train_data(),
     train_model=train_model(),
     evaluate_model=evaluate_model()
