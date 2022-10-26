@@ -13,7 +13,7 @@ def load_training_data() -> Output(
     """
     try:
         print("Loading data")
-        data = pd.read_csv("data/raw/hotel_booking.csv")
+        data = pd.read_csv("data/train_test_split/train.csv")
     except FileNotFoundError:
         print("CSV not found")
         data = pd.DataFrame()
