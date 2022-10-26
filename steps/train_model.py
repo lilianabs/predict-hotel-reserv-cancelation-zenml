@@ -19,6 +19,17 @@ experiment_tracker = Client().active_stack.experiment_tracker
 def train_model(
     X_train: pd.DataFrame, y_train: pd.Series, parameters: ModelParameters
 ) -> Output(model=Pipeline):
+    
+    """Trains the hotel prediction model.
+    
+    Args:
+        X_train (pd.DataFrame): Train data for training the model.
+        y_train (pd.Series): Target feature for training the model.
+        paramters (ModelParameters): Features to select.
+
+    Returns:
+        model (Pipeline): Model that includes all of the preprocessing steps.
+    """
 
     num_transformer = SimpleImputer(strategy="constant")
 
