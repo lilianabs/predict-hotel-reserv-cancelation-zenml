@@ -132,3 +132,4 @@ dmypy.json
 fraud-detection-modeling/
 zenml/
 notebooks/.ipynb_checkpoints
+notebooks/catboost_info
