@@ -1,11 +1,10 @@
 import pandas as pd
 from zenml.steps import step, Output
 
+
 @step(enable_cache=False)
-def load_training_data() -> Output(
-    data=pd.DataFrame
-):
-    
+def load_training_data() -> Output(data=pd.DataFrame):
+
     """Loads the train data
 
     Returns:
