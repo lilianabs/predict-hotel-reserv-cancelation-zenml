@@ -12,7 +12,7 @@ def load_training_data() -> Output(data=pd.DataFrame):
         data: pd.DataFrame
     """
     try:
-        print("Loading data")
+        print("Loading training data")
         data = pd.read_csv("data/train_test_split/train.csv")
     except FileNotFoundError:
         print("CSV not found")
@@ -30,10 +30,8 @@ def load_inference_data(parameters: ModelParameters) -> Output(data=pd.DataFrame
         data: pd.DataFrame
     """
     try:
-        print("Loading data")
+        print("Loading inference data")
         data = pd.read_csv("data/train_test_split/test.csv")
-        data = data.drop('is_canceled', axis=1)
-        data = data[parameters.CAT_FEATURES + parameters.NUM_FEATURES]
     except FileNotFoundError:
         print("CSV not found")
         data = pd.DataFrame()

@@ -9,16 +9,16 @@ from steps.load_data import load_inference_data
 from steps.prediction_steps import prediction_service_loader
 from steps.prediction_steps import predictor
 from steps.drift_detection import drift_detector
-from model_parameters import ModelParameters
 from pipelines.training_pipeline import training_pipeline
 from pipelines.inference_pipeline import inference_pipeline
 
 from zenml.integrations.evidently.visualizers import EvidentlyVisualizer
 
+
 def pipeline_run():
     """Runs training pipeline
     """
-    training_pipeline(
+    training_pipeline_instance = training_pipeline(
         load_training_data=load_training_data(),
         clean_data=clean_data(),
         split_train_data=split_train_data(),
@@ -26,8 +26,30 @@ def pipeline_run():
         evaluate_model=evaluate_model(),
         evaluate_deployment=evaluate_deployment(),
         deploy_model=deploy_model,
-    ).run()
-    
+    )
+
+    training_pipeline_instance.run()
+
+
+def inference_run():
+    """Runs inference pipeline
+    """
+
+    inference_pipeline_instance = inference_pipeline(
+        load_inference_data=load_inference_data(),
+        prediction_service_loader=prediction_service_loader(),
+        predictor=predictor(),
+        load_training_data=load_training_data(),
+        drift_detector=drift_detector,
+    )
+
+    inference_pipeline_instance.run()
+
+    inf_run = inference_pipeline_instance.get_runs()[-1]
+    drift_detection_step = inf_run.get_step(step="drift_detector")
+    EvidentlyVisualizer().visualize(drift_detection_step)
+
+
 if __name__ == "__main__":
     pipeline_run()
-
+    inference_run()
