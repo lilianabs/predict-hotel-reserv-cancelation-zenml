@@ -9,7 +9,6 @@ from steps.load_data import load_inference_data
 from steps.prediction_steps import prediction_service_loader
 from steps.prediction_steps import predictor
 from steps.drift_detection import drift_detector
-from model_parameters import ModelParameters
 from pipelines.training_pipeline import training_pipeline
 from pipelines.inference_pipeline import inference_pipeline
 
@@ -28,6 +27,26 @@ def pipeline_run():
         deploy_model=deploy_model,
     ).run()
     
+def inference_run():
+    """Runs inference pipeline
+    """
+    
+    inference_pipeline(
+        inference_data_loader=load_inference_data(),
+        prediction_service_loader=prediction_service_loader(),
+        predictor=predictor(),
+        training_data_loader=load_training_data(),
+        drift_detector=drift_detector,
+    )
+    
+    def visualize_data_drift():
+        """Visualize the data drift
+        """
+        inf_run = inference_pipeline_instance.get_runs()[-1]
+        drift_detection_step = inf_run.get_step(step="drift_detector")
+        EvidentlyVisualizer().visualize(drift_detection_step)
+
 if __name__ == "__main__":
     pipeline_run()
-
+    inference_run()
+    visualize_data_drift()

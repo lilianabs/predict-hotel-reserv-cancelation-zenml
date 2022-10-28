@@ -15,7 +15,7 @@ from zenml.steps import step, Output
 experiment_tracker = Client().active_stack.experiment_tracker
 
 
-@step(enable_cache=False, experiment_tracker=experiment_tracker.name)
+@step(experiment_tracker=experiment_tracker.name)
 def train_model(
     X_train: pd.DataFrame, y_train: pd.Series, parameters: ModelParameters
 ) -> Output(model=Pipeline):
@@ -49,7 +49,8 @@ def train_model(
 
     params = {"n_estimators": 10, "max_depth": 5}
 
-    mlflow.log_params(params)
+    #mlflow.log_params(params)
+    mlflow.sklearn.autolog()
 
     model = Pipeline(
         steps=[
