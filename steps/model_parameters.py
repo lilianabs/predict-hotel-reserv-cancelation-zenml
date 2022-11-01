@@ -1,3 +1,4 @@
+import os
 from zenml.steps import step, BaseParameters
 
 
@@ -39,3 +40,7 @@ class ModelParameters(BaseParameters):
         "total_of_special_requests",
         "adr",
     ]
+    
+    SERVICE_ACCOUNT_FILE = "credentials.json"
+    TRAIN_DATA_PATH = "gs://hotel-booking-prediction/data/train/train.csv"
+    TEST_DATA_PATH = "gs://hotel-booking-prediction/data/test/test.csv"

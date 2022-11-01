@@ -52,4 +52,4 @@ def inference_run():
 
 if __name__ == "__main__":
     pipeline_run()
-    inference_run()
+    #inference_run()
