@@ -14,6 +14,7 @@ from pipelines.inference_pipeline import batch_inference_pipeline
 
 from zenml.integrations.evidently.visualizers import EvidentlyVisualizer
 
+
 def inference_run():
     """Runs inference pipeline
     """
@@ -31,7 +32,7 @@ def inference_run():
     inf_run = inference_pipeline_instance.get_runs()[-1]
     drift_detection_step = inf_run.get_step(step="drift_detector")
     EvidentlyVisualizer().visualize(drift_detection_step)
-    
 
-if __name__ == "__main__":
-    #inference_run()
+
+# if __name__ == "__main__":
+# inference_run()
