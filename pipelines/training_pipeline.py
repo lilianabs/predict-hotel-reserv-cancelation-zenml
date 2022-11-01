@@ -23,6 +23,6 @@ def training_pipeline(
     model = train_model(X_train, y_train)
     acc_sc = evaluate_model(model, X_valid, y_valid)
     deployment_decision = evaluate_deployment(acc_sc)
-    deploy_model(deployment_decision, model)
+    deployment_model = deploy_model(deployment_decision, model)
 
-    print(acc_sc)
+    print("Deployed new model: ", deployment_model)

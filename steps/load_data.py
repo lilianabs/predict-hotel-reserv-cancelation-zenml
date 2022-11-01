@@ -15,9 +15,11 @@ def load_training_data(parameters: ModelParameters) -> Output(data=pd.DataFrame)
     try:
         print("Loading training data")
         absolute_path = os.path.dirname(__file__)
-        full_path = os.path.join(absolute_path, "..", parameters.SERVICE_ACCOUNT_FILE)
+        full_path_service_account_file = os.path.join(absolute_path, 
+                                                      "..", 
+                                                      parameters.SERVICE_ACCOUNT_FILE)
         data = pd.read_csv(parameters.TRAIN_DATA_PATH, 
-                           storage_options={"token": full_path})
+                           storage_options={"token": full_path_service_account_file})
     except FileNotFoundError:
         print("CSV not found")
         data = pd.DataFrame()
