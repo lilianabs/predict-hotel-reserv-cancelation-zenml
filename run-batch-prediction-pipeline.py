@@ -10,7 +10,7 @@ from steps.prediction_steps import prediction_service_loader
 from steps.prediction_steps import predictor
 from steps.drift_detection import drift_detector
 from pipelines.training_pipeline import training_pipeline
-from pipelines.inference_pipeline import batch_inference_pipeline
+from pipelines.batch_inference_pipeline import batch_inference_pipeline
 
 from zenml.integrations.evidently.visualizers import EvidentlyVisualizer
 
@@ -19,7 +19,7 @@ def inference_run():
     """Runs inference pipeline
     """
 
-    inference_pipeline_instance = inference_pipeline(
+    inference_pipeline_instance = batch_inference_pipeline(
         load_inference_data=load_inference_data(),
         prediction_service_loader=prediction_service_loader(),
         predictor=predictor(),
