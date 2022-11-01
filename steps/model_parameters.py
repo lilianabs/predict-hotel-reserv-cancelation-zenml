@@ -44,6 +44,7 @@ class ModelParameters(BaseParameters):
     SERVICE_ACCOUNT_FILE = "credentials.json"
     TRAIN_DATA_PATH = "gs://hotel-booking-prediction/data/train/train.csv"
     TEST_DATA_PATH = "gs://hotel-booking-prediction/data/test/test.csv"
+    INFERENCE_DATA_PATH = "gs://hotel-booking-prediction/data/full/hotel_booking.csv"
     PROJECT_ID = "direct-cocoa-365217"
     MODEL_LOCAL_PATH = "models/"
     GCP_BUCKET_NAME = "hotel-booking-prediction"
