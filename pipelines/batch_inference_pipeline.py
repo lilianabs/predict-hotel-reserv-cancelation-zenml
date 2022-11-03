@@ -1,15 +1,24 @@
+from steps.clean_data import clean_data_inference
 from zenml.pipelines import pipeline
 
 @pipeline
 def batch_inference_pipeline(
     load_inference_data,
-    prediction_service_loader,
-    predictor,
-    load_training_data,
-    drift_detector,
+    clean_data_inference,
+    fetch_model,
+    get_predictions,
+    store_predictions
+    #prediction_service_loader,
+    #predictor,
+    #load_training_data,
+    #drift_detector,
 ):
     """Inference pipeline with skew and drift detection."""
-    inference_data = load_inference_data()
+    data = load_inference_data()
+    cleaned_data = clean_data_inference(data=data)
+    model = fetch_model()
+    predictions = get_predictions(model, cleaned_data)
+    store_predictions(predictions)
     
     
     

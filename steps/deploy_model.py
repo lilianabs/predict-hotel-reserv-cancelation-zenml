@@ -1,7 +1,6 @@
 import joblib
 import json
 import os
-from datetime import datetime
 from google.cloud import storage
 from google.oauth2 import service_account
 
@@ -33,7 +32,7 @@ def deploy_model(
     
     if deployment_decision:
         
-        print("Storing the best model so far")
+        print("Storing a new model")
         absolute_path = os.path.dirname(__file__)
         full_path_service_account_file = os.path.join(absolute_path, 
                                                       "..", 
@@ -42,7 +41,7 @@ def deploy_model(
         with open(full_path_service_account_file) as source:
             info = json.load(source)
         
-        model_file_name = datetime.today().strftime('%Y-%m-%d') + "-model.pkl"
+        model_file_name = "model.pkl"
         
         try:
             print("Saving model locally")
