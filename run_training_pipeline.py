@@ -8,7 +8,6 @@ from steps.deploy_model import deploy_model
 from pipelines.training_pipeline import training_pipeline
 
 
-
 def pipeline_run():
     """Runs training pipeline
     """

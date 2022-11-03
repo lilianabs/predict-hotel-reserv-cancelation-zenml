@@ -31,6 +31,7 @@ def clean_data(
 
     return cleaned_data
 
+
 @step(enable_cache=False)
 def clean_data_inference(
     data: pd.DataFrame, parameters: ModelParameters
@@ -48,9 +49,7 @@ def clean_data_inference(
     """
 
     # Select features
-    cleaned_data = data[
-        parameters.NUM_FEATURES + parameters.CAT_FEATURES
-    ].copy()
+    cleaned_data = data[parameters.NUM_FEATURES + parameters.CAT_FEATURES].copy()
 
     # Convert all cat features that are float into int
     for col in parameters.CAT_FEATURES:

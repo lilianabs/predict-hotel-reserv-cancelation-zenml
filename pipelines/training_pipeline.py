@@ -3,8 +3,13 @@ from zenml.pipelines import pipeline
 
 @pipeline(enable_cache=False)
 def training_pipeline(
-    load_training_data, clean_data, split_train_data, train_model, evaluate_model,
-    evaluate_deployment, deploy_model
+    load_training_data,
+    clean_data,
+    split_train_data,
+    train_model,
+    evaluate_model,
+    evaluate_deployment,
+    deploy_model,
 ):
     """Defines a training pipeline to train a model that
     predicts the cancellation of a hotel reservation.
