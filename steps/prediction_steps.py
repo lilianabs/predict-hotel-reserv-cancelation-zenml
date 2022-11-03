@@ -20,10 +20,7 @@ def prediction_service_loader() -> BaseService:
 
 
 @step
-def predictor(
-    service: BaseService,
-    data: pd.DataFrame,
-) -> Output(predictions=list):
+def predictor(service: BaseService, data: pd.DataFrame,) -> Output(predictions=list):
     """Run a inference request against a prediction service"""
     service.start(timeout=10)  # should be a NOP if already started
     prediction = service.predict(data.to_numpy())

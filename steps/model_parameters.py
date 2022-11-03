@@ -40,11 +40,15 @@ class ModelParameters(BaseParameters):
         "total_of_special_requests",
         "adr",
     ]
-    
+
     SERVICE_ACCOUNT_FILE = "credentials.json"
     TRAIN_DATA_PATH = "gs://hotel-booking-prediction/data/train/train.csv"
     TEST_DATA_PATH = "gs://hotel-booking-prediction/data/test/test.csv"
+    INFERENCE_DATA_PATH = "gs://hotel-booking-prediction/data/full/hotel_bookings.csv"
     PROJECT_ID = "direct-cocoa-365217"
     MODEL_LOCAL_PATH = "models/"
     GCP_BUCKET_NAME = "hotel-booking-prediction"
     GCP_BUCKET_MODEL_PATH = "data/models/"
+    GCP_BUCKET_PREDS_PATH = "data/full/"
+    GCP_BUCKET_PREDS_FILE_PATH = "data/full/predictions.csv"
+    GCP_BUCKET_MODEL_FILE_PATH = "data/models/model.pkl"

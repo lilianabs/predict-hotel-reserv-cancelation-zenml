@@ -5,13 +5,7 @@ from steps.train_model import train_model
 from steps.evaluate_model import evaluate_model
 from steps.evaluate_deployment import evaluate_deployment
 from steps.deploy_model import deploy_model
-from steps.load_data import load_inference_data
-from steps.prediction_steps import prediction_service_loader
-from steps.prediction_steps import predictor
-from steps.drift_detection import drift_detector
 from pipelines.training_pipeline import training_pipeline
-
-from zenml.integrations.evidently.visualizers import EvidentlyVisualizer
 
 
 def pipeline_run():
