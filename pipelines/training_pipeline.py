@@ -5,6 +5,7 @@ from zenml.pipelines import pipeline
 def training_pipeline(
     load_training_data,
     clean_data,
+    validate_data,
     split_train_data,
     train_model,
     evaluate_model,
@@ -24,6 +25,7 @@ def training_pipeline(
 
     data = load_training_data()
     cleaned_data = clean_data(data)
+    validate_data(dataset=cleaned_data)
     X_train, X_valid, y_train, y_valid = split_train_data(cleaned_data)
     model = train_model(X_train, y_train)
     acc_sc = evaluate_model(model, X_valid, y_valid)
