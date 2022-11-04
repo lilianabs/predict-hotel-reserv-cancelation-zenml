@@ -40,6 +40,8 @@ class ModelParameters(BaseParameters):
         "total_of_special_requests",
         "adr",
     ]
+    
+    LABEL = "is_canceled"
 
     SERVICE_ACCOUNT_FILE = "credentials.json"
     TRAIN_DATA_PATH = "gs://hotel-booking-prediction/data/train/train.csv"
