@@ -135,7 +135,7 @@ The next steps for this project are the following:
 * Implement data drift detection using Deepchecks.
 * Create a dashboard in Data Studio to visualise the predictions.
 * Improve the actual model: During the data validation step (using Deepchecks), it was detected that the data had conflicting labels as well as about 32% of duplicate data.
-* Load the hotel bookings data to a relational database or datawarehouse (BigQuery).
+* Load the hotel bookings data to a relational database or data warehouse (BigQuery).
 
 
 
