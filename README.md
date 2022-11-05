@@ -96,21 +96,22 @@ To set up the ZenML stack:
    ```
 
 1. Install ZenML with the command `pip install zenml`.
-1. Install the required ZenML integrations:
+2. Install all the required libraries with the command `pip install -r requirements.txt`.
+3. Install the required ZenML integrations:
 
    ```
    zenml integration install sklearn mlflow deepchecks -y
    ```
-1. Initialize ZenML with the command: `zenml init && zenml up`.
+4. Initialize ZenML with the command: `zenml init && zenml up`.
 
-1. Register the required ZenML stack:
+5. Register the required ZenML stack:
 
    ```
    zenml data-validator register deepchecks --flavor=deepchecks
    zenml experiment-tracker register mlflow_tracker --flavor=mlflow
    ```
 
-1. Register the ZenML new stack:
+6. Register the ZenML new stack:
 
     ```
     zenml stack register quickstart_stack -a default\
