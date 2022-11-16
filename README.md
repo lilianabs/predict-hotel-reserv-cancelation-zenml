@@ -1,31 +1,31 @@
 # Hotel booking demand prediction
 
-This repository contains the code for a Machine Learning pipeline built using [ZenML](https://zenml.io/home) and [GCP](https://cloud.google.com/) for training a Machine Learning model that predicts hotel booking demand.
+This repository contains the code for two pipelines built using [ZenML](https://zenml.io/home) and [GCP](https://cloud.google.com/). The pipelines train a machine learning model that predicts hotel booking demand and perform batch inference.
 
 ## Problem
 
 Cancellations in hotel booking reservations can result in a significant annual loss for hotels. It would be of great help for hotels to have a system to predict whether a booking will get cancelled so they can offer the room to another customer or plan accordingly. Moreover, the system needs to be simple to implement and have the capability to be updated continuously as new data becomes available. 
 
-For this project, I’m using the [Hotel booking demand](https://www.kaggle.com/datasets/mojtaba142/hotel-booking) dataset. It contains data of two hotel bookings for almost two years that either effectively arrived or were cancelled. The size of the data set is relatively small (36 columns and 119,390 rows) but was definitely useful for creating a proof of concept.
+For this project, I’m using the [Hotel booking demand](https://www.kaggle.com/datasets/mojtaba142/hotel-booking) dataset. It contains data of two hotel bookings for almost two years that either effectively arrived or were cancelled. The size of the data set is relatively small (36 columns and 119,390 rows) but was definitely useful for creating a proof of concept for a system that predicts booking cancelations.
 
 ## Solution
 
-To solve this problem, I set out to create a Machine Learning model to predict hotel booking demand using historical data. This model is continuously trained (CT) and deployed (CD) using **two pipelines**: **train** and **batch prediction**. The train pipeline trains the model as new historic data is available and the batch prediction pipeline stores the predictions in a database. The pipelines both run independently and can be triggered automatically. In addition, I implemented a Continuous Integration (CI) strategy to check the quality of the Python code using GitHub Actions. 
+To solve this problem, I set out to create a machine learning model to predict hotel booking demand using historical data. This model is continuously trained (CT) and deployed (CD) using **two pipelines**: **training** and **batch prediction**. The training pipeline trains the model as new historic data is available and the batch prediction pipeline stores the predictions in a database. The pipelines both run independently and can be triggered automatically. In addition, I implemented a Continuous Integration (CI) strategy to check the quality of the Python code using GitHub Actions. 
 
-![Solution](assets/Hotel%20bookings%20reservation%20(1).jpg)
+![Solution](assets/Hotel%20bookings%20reservation%20.jpg)
 
 This project has the following components:
 
-* A Cloud Storage bucket stores the hotel bookings database.
-* A Cloud Storage bucket stores the model registry.
-* The train pipeline trains and stores the model (Continuous Deployment) on the model registry.
-* The batch prediction pipeline fetches the latest model from the model registry and computes predictions for the hotel bookings database.
+* Hotel bookings database stored in a Cloud Storage bucket.
+* Model registry stored in a Cloud Storage bucket.
+* The training pipeline runs on Compute Engine. It trains and stores the model (Continuous Deployment) on the model registry.
+* The batch prediction pipeline runs on Compute Engine. It fetches the latest model from the model registry and computes predictions for the hotel bookings databas
 
 Also, it has a ZenML ML stack with the following components:
 
-* ML library: Sklearn to train the model. 
-* Experiment tracker: MLFlow to track experiments.
-* Data validation: Deepchecks to validate the training data.
+* Sklearn: Machine learning library to train the model.
+* [MLFlow](https://mlflow.org/): Experiment tracker.
+* [Deepchecks](https://deepchecks.com/): Data validation library to validate the training data. 
 
 ### Pipelines
 
@@ -131,11 +131,11 @@ This is work in progress, for more information see [this PR](https://github.com/
 ## Roadmap
 The next steps for this project are the following:
 
-* Run the pipelines in GCP.
+* Run the pipelines in Vertex AI.
 * Use [ZenML’s Stack Recipes](https://github.com/zenml-io/mlops-stacks#-list-of-recipes) to create the GCP infrastructure.
 * Implement data drift detection using Deepchecks.
 * Create a dashboard in Data Studio to visualise the predictions.
-* Improve the actual model: During the data validation step (using Deepchecks), it was detected that the data had conflicting labels as well as about 32% of duplicate data.
+* Improve the baseline model: During the data validation step, Deepchecks detected that the data had conflicting labels and about 32% of duplicate data.
 * Load the hotel bookings data to a relational database or data warehouse (BigQuery).
 
 
