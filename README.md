@@ -12,7 +12,7 @@ For this project, I’m using the [Hotel booking demand](https://www.kaggle.com/
 
 To solve this problem, I set out to create a machine learning model to predict hotel booking demand using historical data. This model is continuously trained (CT) and deployed (CD) using **two pipelines**: **training** and **batch prediction**. The training pipeline trains the model as new historic data is available and the batch prediction pipeline stores the predictions in a database. The pipelines both run independently and can be triggered automatically. In addition, I implemented a Continuous Integration (CI) strategy to check the quality of the Python code using GitHub Actions. 
 
-![Solution](assets/Hotel%20bookings%20reservation%20.jpg)
+![Solution](assets/Hotel%20bookings%20reservation.jpg)
 
 This project has the following components:
 
